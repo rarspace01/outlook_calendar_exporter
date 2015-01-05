@@ -1,1 +1,0 @@
-Goes to %appdata%\Microsoft\Outlook
