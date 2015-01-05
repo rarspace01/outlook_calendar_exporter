@@ -17,18 +17,14 @@ namespace ExportOutlookCalendar
         static void Main(string[] args)
         {
 
-            new Program();
-
-        }
-
-
-        public Program Program()
-        {
             int waitMinutes = 5;
             //int waitSeconds = 10;
 
             while (true)
             {
+
+                writeOutllokToIcs("C:/Users/Public/export.ics");
+
                 pushPost(encodeFile("C:/Users/Public/export.ics"));
 
                 Console.WriteLine("Pushed ICS");
@@ -107,28 +103,29 @@ namespace ExportOutlookCalendar
         }
 
 
-        //private static void writeOutllokToIcs(string calendarFileName)
-        //{
+        private static void writeOutllokToIcs(string calendarFileName)
+        {
 
-        //    if (string.IsNullOrEmpty(calendarFileName))
-        //        throw new ArgumentException("calendarFileName",
-        //        "Parameter must contain a value.");
-            
-        //    Outlook.Folder calendar = Application.Session.GetDefaultFolder(
-        //        Outlook.OlDefaultFolders.olFolderCalendar) as Outlook.Folder;
-        //    Outlook.CalendarSharing exporter = calendar.GetCalendarExporter();
+            Microsoft.Office.Interop.Outlook.Application oApp = null;
+            Microsoft.Office.Interop.Outlook.NameSpace mapiNamespace = null;
+            Microsoft.Office.Interop.Outlook.MAPIFolder CalendarFolder = null;
 
-        //    // Set the properties for the export
-        //    exporter.CalendarDetail = Outlook.OlCalendarDetail.olFullDetails;
-        //    exporter.IncludeAttachments = true;
-        //    exporter.IncludePrivateDetails = true;
-        //    exporter.RestrictToWorkingHours = false;
-        //    exporter.IncludeWholeCalendar = true;
+            oApp = new Microsoft.Office.Interop.Outlook.Application();
+            mapiNamespace = oApp.GetNamespace("MAPI"); ;
+            CalendarFolder = mapiNamespace.GetDefaultFolder(Microsoft.Office.Interop.Outlook.OlDefaultFolders.olFolderCalendar);
 
-        //    // Save the calendar to disk
-        //    exporter.SaveAsICal(calendarFileName);
+            CalendarSharing cso = CalendarFolder.GetCalendarExporter();
 
-        //}
+            cso.CalendarDetail = OlCalendarDetail.olFullDetails;
+            cso.IncludeWholeCalendar = true;
+            cso.IncludeAttachments = false;
+            cso.IncludePrivateDetails = true;
+            cso.RestrictToWorkingHours = false;
+
+            // save to file
+            cso.SaveAsICal(calendarFileName);
+
+        }
 
     }
 
